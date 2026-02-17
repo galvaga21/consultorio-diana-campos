@@ -1,27 +1,64 @@
 
-import Link from 'next/link';
-import { Home, Users, Calendar, FileText, Settings, PieChart, Activity } from 'lucide-react';
+"use client";
 
-const navItems = [
+import Link from 'next/link';
+import { Home, Users, Calendar, FileText, Settings, PieChart, Activity, MessageSquare, ClipboardList, Shield } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { NavItem, UserRole } from '../lib/types';
+import Image from 'next/image';
+
+const navItems: NavItem[] = [
+    // Common
     { label: 'Inicio', href: '/dashboard', icon: Home },
-    { label: 'Mis Pacientes', href: '/expediente', icon: Users }, // Demo: redirect to expediente
-    { label: 'Calendario', href: '/dashboard', icon: Calendar },
-    { label: 'Archivos', href: '/archivos', icon: FileText },
-    { label: 'Finanzas', href: '/finanzas', icon: PieChart },
+
+    // Psychologist
+    { label: 'Agenda', href: '/dashboard', icon: Calendar, roles: ['psychologist'] },
+    { label: 'Pacientes', href: '/expediente', icon: Users, roles: ['psychologist'] },
+    { label: 'Finanzas', href: '/finanzas', icon: PieChart, roles: ['psychologist'] },
+
+    // Patient
+    { label: 'Mis Citas', href: '/dashboard', icon: Calendar, roles: ['patient'] },
+    { label: 'Mi Expediente', href: '/expediente', icon: ClipboardList, roles: ['patient'] },
+    { label: 'Pagos', href: '/finanzas', icon: FileText, roles: ['patient'] },
+
+    // Admin
+    { label: 'Usuarios', href: '/usuarios', icon: Users, roles: ['admin'] },
+    { label: 'Reportes', href: '/reportes', icon: Activity, roles: ['admin'] },
+
+    // Shared
+    { label: 'Chat', href: '/chat', icon: MessageSquare, roles: ['psychologist', 'patient'] },
     { label: 'Configuración', href: '/configuracion', icon: Settings },
 ];
 
 export function Sidebar() {
+    const { user } = useAuth();
+
+    if (!user) return null; // Or a loading skeleton
+
+    const filteredNavItems = navItems.filter(item => {
+        if (!item.roles) return true;
+        return item.roles.includes(user.role);
+    });
+
     return (
         <aside className="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 hidden md:flex flex-col">
             <div className="flex items-center h-16 px-6 border-b border-gray-100">
                 <Activity className="w-8 h-8 text-blue-600 mr-2" />
                 <span className="text-xl font-bold text-gray-900 tracking-tight">Consultorio</span>
             </div>
-            <nav className="flex-1 px-4 py-6 space-y-1">
-                {navItems.map((item) => (
+
+            <div className="px-4 py-2">
+                <div className="bg-gray-100 rounded-md px-3 py-1 text-xs font-bold text-gray-500 uppercase tracking-wider text-center">
+                    {user.role === 'psychologist' && 'Psicóloga'}
+                    {user.role === 'patient' && 'Paciente'}
+                    {user.role === 'admin' && 'Admin'}
+                </div>
+            </div>
+
+            <nav className="flex-1 px-4 py-4 space-y-1">
+                {filteredNavItems.map((item) => (
                     <Link
-                        key={item.href}
+                        key={item.label}
                         href={item.href}
                         className="flex items-center px-4 py-3 text-sm font-medium text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors group"
                     >
@@ -32,12 +69,16 @@ export function Sidebar() {
             </nav>
             <div className="p-4 border-t border-gray-100">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
-                        DC
+                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold overflow-hidden relative">
+                        {user.photoUrl ? (
+                            <Image src={user.photoUrl} alt={user.name} fill className="object-cover" />
+                        ) : (
+                            <span>{user.name.charAt(0)}</span>
+                        )}
                     </div>
-                    <div>
-                        <p className="text-sm font-medium text-gray-900">Dr. Diana Campos</p>
-                        <p className="text-xs text-gray-500">Psicóloga Clínica</p>
+                    <div className="overflow-hidden">
+                        <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
+                        <p className="text-xs text-gray-500 truncate">{user.email}</p>
                     </div>
                 </div>
             </div>

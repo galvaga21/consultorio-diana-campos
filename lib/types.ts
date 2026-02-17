@@ -1,6 +1,16 @@
 
 // Basic types for the application
 
+export type UserRole = 'admin' | 'psychologist' | 'patient';
+
+export interface User {
+    id: string;
+    name: string;
+    email: string;
+    role: UserRole;
+    photoUrl?: string;
+}
+
 export interface Patient {
     id: string;
     fullName: string;
@@ -49,5 +59,6 @@ export interface Payment {
 export type NavItem = {
     label: string;
     href: string;
-    icon: React.ComponentType;
+    icon: React.ComponentType<any>;
+    roles?: UserRole[]; // Optional, if not present assumes all roles
 };
