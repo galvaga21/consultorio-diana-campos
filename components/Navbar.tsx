@@ -14,13 +14,13 @@ export function Navbar() {
                         </Link>
                     </div>
                     <div className="hidden md:flex items-center space-x-8">
-                        <Link href="/#servicios" className="text-gray-600 hover:text-blue-600 transition-colors font-medium text-sm">
+                        <Link href="/services" className="text-gray-600 hover:text-blue-600 transition-colors font-medium text-sm">
                             Servicios
                         </Link>
-                        <Link href="/#sobre-mi" className="text-gray-600 hover:text-blue-600 transition-colors font-medium text-sm">
+                        <Link href="/about" className="text-gray-600 hover:text-blue-600 transition-colors font-medium text-sm">
                             Sobre Mí
                         </Link>
-                        <Link href="/#contacto" className="text-gray-600 hover:text-blue-600 transition-colors font-medium text-sm">
+                        <Link href="/contact" className="text-gray-600 hover:text-blue-600 transition-colors font-medium text-sm">
                             Contacto
                         </Link>
                     </div>
