@@ -13,13 +13,16 @@ export default function AboutPage() {
         <div className="bg-white overflow-hidden">
 
             {/* Header Section */}
-            <div className="relative bg-slate-900 py-32 sm:py-40">
+            {/* Header Section */}
+            <div className="relative bg-gradient-to-br from-blue-600 to-blue-800 py-32 sm:py-40">
                 <div className="absolute inset-0 overflow-hidden">
-                    <div className="absolute inset-0 bg-blue-900 mix-blend-multiply opacity-50" />
+                    {/* Decorative pattern/overlay could go here if needed, or just clean gradient */}
+                    <div className="absolute -top-24 -left-24 w-96 h-96 bg-white/10 rounded-full blur-3xl opacity-50 mix-blend-overlay" />
+                    <div className="absolute bottom-0 right-0 translate-y-12 translate-x-12 w-80 h-80 bg-blue-400/20 rounded-full blur-3xl" />
                 </div>
                 <div className="relative mx-auto max-w-7xl px-6 lg:px-8 text-center text-white">
-                    <h1 className="text-4xl font-bold tracking-tight sm:text-6xl mb-6">Conoce a tu Terapeuta</h1>
-                    <p className="text-xl text-blue-100 max-w-2xl mx-auto">
+                    <h1 className="text-4xl font-bold tracking-tight sm:text-6xl mb-6 font-sans">Conoce a tu Terapeuta</h1>
+                    <p className="text-xl text-blue-50 max-w-2xl mx-auto font-light leading-relaxed">
                         "Mi misión es acompañarte en el proceso de descubrir tu propia fortaleza."
                     </p>
                 </div>
