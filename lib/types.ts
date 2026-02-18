@@ -1,15 +1,47 @@
-
 // Basic types for the application
 
 export type UserRole = 'admin' | 'psychologist' | 'patient';
 
-export interface User {
-    id: string;
-    name: string;
-    email: string;
-    role: UserRole;
-    photoUrl?: string;
+export interface Role {
+    id: UserRole;
+    nombre_rol: string;
+    descripcion: string;
+    area_id?: string;
 }
+
+export interface Area {
+    id: string;
+    nombre_area: string;
+    descripcion: string;
+}
+
+export interface UserProfile {
+    uid: string;
+    nombres: string;
+    apellidos: string;
+    email: string;
+    username?: string;
+    celular?: string;
+    sexo?: 'Masculino' | 'Femenino' | 'Otro';
+    pais?: string;
+    direccion?: string;
+    tipo_documento?: string;
+    numero_documento?: string;
+    foto_perfil?: string;
+    rol_id: UserRole;
+    createdAt?: any; // Firebase Timestamp
+    updatedAt?: any; // Firebase Timestamp
+
+    // Compatibility with existing components (computed in context)
+    name?: string;
+    role?: UserRole; // Alias for rol_id
+    id?: string; // Alias for uid
+    photoUrl?: string; // Alias for foto_perfil
+}
+
+// Re-export User as UserProfile for backward compatibility, 
+// but components should eventually migrate to use UserProfile fields.
+export type User = UserProfile;
 
 export interface Patient {
     id: string;

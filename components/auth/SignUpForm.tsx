@@ -1,7 +1,71 @@
+"use client";
 
 import Link from 'next/link';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../lib/firebase';
+import { createUserProfile } from '../../lib/firebase-utils';
 
 export function SignUpForm() {
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: ''
+    });
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+
+        try {
+            const { firstName, lastName, email, password } = formData;
+
+            // 1. Create Auth User
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            // 2. Create Firestore Profile
+            await createUserProfile(user.uid, {
+                nombres: firstName,
+                apellidos: lastName,
+                email: email,
+                rol_id: 'patient', // Default role
+                foto_perfil: ''
+            });
+
+            // 3. Redirect
+            router.push('/dashboard');
+
+        } catch (err: any) {
+            console.error(err);
+            if (err.code === 'auth/email-already-in-use') {
+                setError('El correo electrónico ya está registrado.');
+            } else if (err.code === 'auth/weak-password') {
+                setError('La contraseña debe tener al menos 6 caracteres.');
+            } else if (err.code === 'permission-denied') {
+                setError('Error de permisos en la base de datos. Verifica las Reglas de Firestore en la consola de Firebase.');
+            } else {
+                setError('Ocurrió un error al crear la cuenta. Inténtalo de nuevo. Detalle: ' + err.message);
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <>
             <div className="text-left mb-10">
@@ -12,7 +76,17 @@ export function SignUpForm() {
             </div>
 
             <div className="mt-8">
-                {/* Google Login Button */}
+                {/* Error Alert */}
+                {error && (
+                    <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        {error}
+                    </div>
+                )}
+
+                {/* Google Login Button (Placeholder logic for now) */}
                 <button
                     type="button"
                     className="flex w-full items-center justify-center gap-3 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm border border-gray-200 hover:bg-gray-50 transition-all mb-6"
@@ -35,7 +109,7 @@ export function SignUpForm() {
                     </div>
                 </div>
 
-                <form className="space-y-5">
+                <form className="space-y-5" onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 gap-y-5 gap-x-4 sm:grid-cols-2">
                         <div>
                             <label htmlFor="first-name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -43,9 +117,12 @@ export function SignUpForm() {
                             </label>
                             <input
                                 type="text"
-                                name="first-name"
+                                name="firstName"
                                 id="first-name"
                                 autoComplete="given-name"
+                                required
+                                value={formData.firstName}
+                                onChange={handleChange}
                                 className="block w-full rounded-lg border-gray-300 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:ring-blue-500 sm:text-sm bg-gray-50 focus:bg-white transition-colors border"
                                 placeholder="Tu nombre"
                             />
@@ -56,9 +133,12 @@ export function SignUpForm() {
                             </label>
                             <input
                                 type="text"
-                                name="last-name"
+                                name="lastName"
                                 id="last-name"
                                 autoComplete="family-name"
+                                required
+                                value={formData.lastName}
+                                onChange={handleChange}
                                 className="block w-full rounded-lg border-gray-300 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:ring-blue-500 sm:text-sm bg-gray-50 focus:bg-white transition-colors border"
                                 placeholder="Tu apellido"
                             />
@@ -75,6 +155,8 @@ export function SignUpForm() {
                             type="email"
                             autoComplete="email"
                             required
+                            value={formData.email}
+                            onChange={handleChange}
                             className="block w-full rounded-lg border-gray-300 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:ring-blue-500 sm:text-sm bg-gray-50 focus:bg-white transition-colors border"
                             placeholder="nombre@ejemplo.com"
                         />
@@ -92,6 +174,8 @@ export function SignUpForm() {
                             type="password"
                             autoComplete="new-password"
                             required
+                            value={formData.password}
+                            onChange={handleChange}
                             className="block w-full rounded-lg border-gray-300 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:ring-blue-500 sm:text-sm bg-gray-50 focus:bg-white transition-colors border"
                             placeholder="••••••••"
                         />
@@ -104,9 +188,10 @@ export function SignUpForm() {
                     <div>
                         <button
                             type="submit"
-                            className="flex w-full justify-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg hover:bg-blue-700 hover:shadow-blue-500/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all transform active:scale-[0.98]"
+                            disabled={loading}
+                            className={`flex w-full justify-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg  hover:shadow-blue-500/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all transform active:scale-[0.98] ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-blue-700'}`}
                         >
-                            Crear cuenta
+                            {loading ? 'Creando cuenta...' : 'Crear cuenta'}
                         </button>
                     </div>
                 </form>

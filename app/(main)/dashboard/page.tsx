@@ -4,13 +4,28 @@
 import { useAuth } from '../../../context/AuthContext';
 import { mockAppointments } from '../../../lib/mockData';
 import { AppointmentCard } from '../../../components/dashboard/AppointmentCard';
+import { UsersList } from '../../../components/admin/UsersList';
 
 const DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
-  if (!user) return null; // Or skeleton
+  if (loading) {
+    return (
+      <div className="space-y-6 animate-pulse">
+        <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="h-32 bg-gray-200 rounded-xl"></div>
+          <div className="h-32 bg-gray-200 rounded-xl"></div>
+          <div className="h-32 bg-gray-200 rounded-xl"></div>
+        </div>
+        <div className="h-64 bg-gray-200 rounded-xl mt-6"></div>
+      </div>
+    );
+  }
+
+  if (!user) return null;
 
   // --- VISTA PSICÓLOGA ---
   if (user.role === 'psychologist') {
@@ -112,16 +127,14 @@ export default function Dashboard() {
   // --- VISTA ADMIN ---
   if (user.role === 'admin') {
     return (
-      <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900">Panel de Administración</h1>
+      <div className="space-y-8">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-gray-900">Panel de Administración</h1>
+          <span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full font-medium">Modo Superusuario</span>
+        </div>
+
+        {/* Stats Section (Mock Data for now) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-            <h3 className="text-gray-500 text-sm font-medium uppercase">Usuarios Totales</h3>
-            <p className="text-3xl font-bold text-gray-900 mt-2">1,234</p>
-            <span className="text-green-600 text-sm font-medium flex items-center mt-2">
-              ↑ 12% vs mes pasado
-            </span>
-          </div>
           <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
             <h3 className="text-gray-500 text-sm font-medium uppercase">Ingresos Mensuales</h3>
             <p className="text-3xl font-bold text-gray-900 mt-2">$45,600</p>
@@ -133,12 +146,15 @@ export default function Dashboard() {
             <h3 className="text-gray-500 text-sm font-medium uppercase">Citas Completadas</h3>
             <p className="text-3xl font-bold text-gray-900 mt-2">89</p>
           </div>
+          <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <h3 className="text-gray-500 text-sm font-medium uppercase">Estado del Sistema</h3>
+            <p className="text-lg font-medium text-green-600 mt-2">Operativo ✅</p>
+            <p className="text-xs text-gray-400 mt-1">v1.0.0</p>
+          </div>
         </div>
 
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <h3 className="text-yellow-800 font-semibold mb-2">Sistema</h3>
-          <p className="text-yellow-700 text-sm">Versión 1.0.0 - Todos los servicios operativos.</p>
-        </div>
+        {/* Gestion de Usuarios */}
+        <UsersList />
       </div>
     )
   }

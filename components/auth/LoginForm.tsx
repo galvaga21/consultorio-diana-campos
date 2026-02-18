@@ -1,7 +1,48 @@
+"use client";
 
 import Link from 'next/link';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../lib/firebase';
 
 export function LoginForm() {
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [formData, setFormData] = useState({
+        email: '',
+        password: ''
+    });
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+
+        try {
+            await signInWithEmailAndPassword(auth, formData.email, formData.password);
+            router.push('/dashboard');
+        } catch (err: any) {
+            console.error(err);
+            if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+                setError('Correo o contraseña incorrectos.');
+            } else {
+                setError('Ocurrió un error al iniciar sesión. Inténtalo de nuevo.');
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <>
             <div className="text-left mb-10">
@@ -12,7 +53,17 @@ export function LoginForm() {
             </div>
 
             <div className="mt-8">
-                {/* Google Login Button */}
+                {/* Error Alert */}
+                {error && (
+                    <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        {error}
+                    </div>
+                )}
+
+                {/* Google Login Button (Placeholder logic for now) */}
                 <button
                     type="button"
                     className="flex w-full items-center justify-center gap-3 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm border border-gray-200 hover:bg-gray-50 transition-all mb-6"
@@ -35,7 +86,7 @@ export function LoginForm() {
                     </div>
                 </div>
 
-                <form className="space-y-5">
+                <form className="space-y-5" onSubmit={handleSubmit}>
                     <div>
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                             Email
@@ -46,6 +97,8 @@ export function LoginForm() {
                             type="email"
                             autoComplete="email"
                             required
+                            value={formData.email}
+                            onChange={handleChange}
                             className="block w-full rounded-lg border-gray-300 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:ring-blue-500 sm:text-sm bg-gray-50 focus:bg-white transition-colors border"
                             placeholder="nombre@ejemplo.com"
                         />
@@ -63,6 +116,8 @@ export function LoginForm() {
                             type="password"
                             autoComplete="current-password"
                             required
+                            value={formData.password}
+                            onChange={handleChange}
                             className="block w-full rounded-lg border-gray-300 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:ring-blue-500 sm:text-sm bg-gray-50 focus:bg-white transition-colors border"
                             placeholder="••••••••"
                         />
@@ -76,9 +131,10 @@ export function LoginForm() {
                     <div>
                         <button
                             type="submit"
-                            className="flex w-full justify-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg hover:bg-blue-700 hover:shadow-blue-500/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all transform active:scale-[0.98]"
+                            disabled={loading}
+                            className={`flex w-full justify-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all transform active:scale-[0.98] ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-blue-700 hover:shadow-blue-500/30'}`}
                         >
-                            Ingresar
+                            {loading ? 'Ingresando...' : 'Ingresar'}
                         </button>
                     </div>
                 </form>

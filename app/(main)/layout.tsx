@@ -15,7 +15,7 @@ export default function MainLayout({
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
-      <div className="flex-1 flex flex-col md:ml-64 transition-all duration-300 min-w-0">
+      <div className="flex-1 flex flex-col md:ml-64 min-w-0">
         <Header onMenuClick={() => setIsSidebarOpen(true)} />
 
         <main className="flex-1 p-4 sm:p-6 mt-16 overflow-y-auto">

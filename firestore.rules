@@ -1,0 +1,13 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // MODO DESARROLLO: Permisivo para usuarios autenticados
+    // Úsalo para que funcione el registro mientras desarrollas.
+    // Antes de producción, deberás restringir esto.
+    
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

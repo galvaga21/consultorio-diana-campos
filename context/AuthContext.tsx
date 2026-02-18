@@ -1,80 +1,65 @@
-
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { User, UserRole } from "../lib/types";
+import { User, UserProfile } from "../lib/types";
 import { useRouter } from "next/navigation";
+import { auth } from "../lib/firebase"; // Import auth
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { getUserProfile, initializeSystem } from "../lib/firebase-utils";
 
 interface AuthContextType {
-    user: User | null;
+    user: UserProfile | null;
     loading: boolean;
-    login: (role: UserRole) => Promise<void>;
-    logout: () => void;
+    logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(false);
+    const [user, setUser] = useState<UserProfile | null>(null);
+    const [loading, setLoading] = useState(true);
     const router = useRouter();
 
-    // Load from local storage on mount (simple persistence simulation)
     useEffect(() => {
-        if (typeof window !== "undefined") {
-            const storedUser = localStorage.getItem("mock_user");
-            if (storedUser) {
-                setUser(JSON.parse(storedUser));
-            }
-        }
-    }, []);
+        // Initialize system roles/areas on mount (optional, can be moved to a script)
+        // initializeSystem(); // Comentado para evitar errores de permisos en landing. Ejecutar manualmente o con usuario admin.
 
-    const login = async (role: UserRole) => {
-        setLoading(true);
-        let mockUser: User = {
-            id: "admin-1",
-            name: "Admin User",
-            email: "admin@example.com",
-            role: "admin",
-        };
-
-        if (role === "psychologist") {
-            mockUser = {
-                id: "doctor-1",
-                name: "Dr. Diana Campos",
-                email: "diana@consultorio.com",
-                role: "psychologist",
-                photoUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=200&auto=format&fit=crop",
-            };
-        } else if (role === "patient") {
-            mockUser = {
-                id: "patient-1",
-                name: "Ana García",
-                email: "ana.garcia@example.com",
-                role: "patient",
-                photoUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-            };
-        }
-
-        // Simulate network delay
-        setTimeout(() => {
-            setUser(mockUser);
-            if (typeof window !== "undefined") {
-                localStorage.setItem("mock_user", JSON.stringify(mockUser));
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            if (firebaseUser) {
+                // Fetch user profile from Firestore
+                try {
+                    const profile = await getUserProfile(firebaseUser.uid);
+                    if (profile) {
+                        setUser(profile);
+                    } else {
+                        console.warn("User authenticated but no profile found in Firestore (or permissions error).");
+                        setUser(null);
+                    }
+                } catch (error) {
+                    console.error("Error fetching user profile (check Firestore permissions):", error);
+                    setUser(null);
+                }
+            } else {
+                setUser(null);
             }
             setLoading(false);
-            router.push("/dashboard");
-        }, 800);
-    };
+        });
 
-    const logout = () => {
-        setUser(null);
-        localStorage.removeItem("mock_user");
-        router.push("/");
+        return () => unsubscribe();
+    }, []);
+
+    const logout = async () => {
+        try {
+            await signOut(auth);
+            setUser(null);
+            router.push("/");
+        } catch (error) {
+            console.error("Error logging out:", error);
+        }
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout }}>
+        <AuthContext.Provider value={{ user, loading, logout }}>
             {children}
         </AuthContext.Provider>
     );
