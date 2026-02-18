@@ -42,7 +42,7 @@ interface SidebarProps {
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
     const { user, logout, loading } = useAuth();
 
-    if (loading) {
+    if (loading || !user) {
         return (
             <aside className={`
                 fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 flex flex-col md:translate-x-0
@@ -72,7 +72,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         )
     }
 
-    if (!user) return null;
+
 
     const filteredNavItems = navItems.filter(item => {
         if (!item.roles) return true;
