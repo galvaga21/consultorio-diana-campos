@@ -93,4 +93,5 @@ export type NavItem = {
     href: string;
     icon: React.ComponentType<any>;
     roles?: UserRole[]; // Optional, if not present assumes all roles
+    children?: NavItem[]; // For nested menus
 };

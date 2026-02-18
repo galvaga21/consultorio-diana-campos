@@ -1,6 +1,4 @@
-
 import { LoginForm } from '../../../components/auth/LoginForm';
-import { MagicLogin } from '../../../components/auth/MagicLogin';
 
 export const metadata = {
     title: 'Iniciar Sesión',
@@ -11,7 +9,6 @@ export default function LoginPage() {
     return (
         <>
             <LoginForm />
-            <MagicLogin />
         </>
     );
 }

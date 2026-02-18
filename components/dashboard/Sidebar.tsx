@@ -1,11 +1,11 @@
-
-"use client";
-
 import Link from 'next/link';
-import { Home, Users, Calendar, FileText, Settings, PieChart, Activity, MessageSquare, ClipboardList, Shield, LogOut } from 'lucide-react';
+import { Home, Users, Calendar, FileText, Settings, PieChart, Activity, MessageSquare, ClipboardList, Shield, LogOut, ChevronDown, ChevronRight, Server, LayoutGrid } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { NavItem, UserRole } from '../../lib/types';
 import Image from 'next/image';
+import { useState } from 'react';
+import { X } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 const navItems: NavItem[] = [
     // Common
@@ -21,18 +21,24 @@ const navItems: NavItem[] = [
     { label: 'Mi Expediente', href: '/expediente', icon: ClipboardList, roles: ['patient'] },
     { label: 'Pagos', href: '/finanzas', icon: FileText, roles: ['patient'] },
 
-    // Admin
-    { label: 'Usuarios', href: '/usuarios', icon: Users, roles: ['admin'] },
+    // Admin - Gestión del Sistema Group
+    {
+        label: 'Gestión del Sistema',
+        href: '#',
+        icon: Server,
+        roles: ['admin'],
+        children: [
+            { label: 'Usuarios', href: '/admin/usuarios', icon: Users, roles: ['admin'] },
+            { label: 'Roles', href: '/admin/roles', icon: Shield, roles: ['admin'] },
+            { label: 'Áreas', href: '/admin/areas', icon: LayoutGrid, roles: ['admin'] },
+        ]
+    },
     { label: 'Reportes', href: '/reportes', icon: Activity, roles: ['admin'] },
 
     // Shared
     { label: 'Chat', href: '/chat', icon: MessageSquare, roles: ['psychologist', 'patient'] },
     { label: 'Configuración', href: '/configuracion', icon: Settings },
 ];
-
-import { X } from 'lucide-react';
-
-// ... imports remain the same
 
 interface SidebarProps {
     isOpen: boolean;
@@ -41,6 +47,16 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
     const { user, logout, loading } = useAuth();
+    const pathname = usePathname();
+    const [expandedMenu, setExpandedMenu] = useState<string | null>('Gestión del Sistema'); // Default expanded for visibility
+
+    const toggleMenu = (label: string) => {
+        if (expandedMenu === label) {
+            setExpandedMenu(null);
+        } else {
+            setExpandedMenu(label);
+        }
+    };
 
     if (loading || !user) {
         return (
@@ -59,26 +75,78 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                         <div key={i} className="animate-pulse h-10 bg-gray-100 rounded-lg w-full"></div>
                     ))}
                 </div>
-                <div className="p-4 border-t border-gray-100">
-                    <div className="animate-pulse flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
-                        <div className="flex-1 space-y-2">
-                            <div className="h-3 bg-gray-200 rounded w-20"></div>
-                            <div className="h-2 bg-gray-200 rounded w-16"></div>
-                        </div>
-                    </div>
-                </div>
             </aside>
         )
     }
 
-
+    const currentRole = user.role || user.rol_id || 'patient';
 
     const filteredNavItems = navItems.filter(item => {
         if (!item.roles) return true;
-        const currentRole = user.role || user.rol_id || 'patient';
         return item.roles.includes(currentRole);
     });
+
+    const renderNavItem = (item: NavItem) => {
+        const isActive = pathname === item.href;
+        const hasChildren = item.children && item.children.length > 0;
+        const isExpanded = expandedMenu === item.label;
+
+        if (hasChildren) {
+            return (
+                <div key={item.label}>
+                    <button
+                        onClick={() => toggleMenu(item.label)}
+                        className={`w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg transition-colors group ${isExpanded ? 'bg-gray-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50'
+                            }`}
+                    >
+                        <div className="flex items-center">
+                            <item.icon className={`w-5 h-5 mr-3 ${isExpanded ? 'text-blue-600' : 'text-gray-400 group-hover:text-blue-600'}`} />
+                            {item.label}
+                        </div>
+                        {isExpanded ? (
+                            <ChevronDown className="w-4 h-4 text-gray-400" />
+                        ) : (
+                            <ChevronRight className="w-4 h-4 text-gray-400" />
+                        )}
+                    </button>
+
+                    {isExpanded && (
+                        <div className="ml-4 pl-4 border-l-2 border-gray-100 space-y-1 mt-1">
+                            {item.children!.map(child => (
+                                <Link
+                                    key={child.href}
+                                    href={child.href}
+                                    onClick={onClose}
+                                    className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors ${pathname === child.href
+                                            ? 'bg-blue-50 text-blue-700'
+                                            : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
+                                        }`}
+                                >
+                                    <child.icon className="w-4 h-4 mr-3 opacity-70" />
+                                    {child.label}
+                                </Link>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        return (
+            <Link
+                key={item.label}
+                href={item.href}
+                onClick={onClose}
+                className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors group ${isActive
+                        ? 'bg-blue-50 text-blue-700'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-blue-600'
+                    }`}
+            >
+                <item.icon className={`w-5 h-5 mr-3 ${isActive ? 'text-blue-600' : 'text-gray-400 group-hover:text-blue-600'}`} />
+                {item.label}
+            </Link>
+        );
+    };
 
     return (
         <>
@@ -123,18 +191,9 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 </div>
 
                 <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
-                    {filteredNavItems.map((item) => (
-                        <Link
-                            key={item.label}
-                            href={item.href}
-                            onClick={onClose} // Auto-close on mobile selection
-                            className="flex items-center px-4 py-3 text-sm font-medium text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors group"
-                        >
-                            <item.icon className="w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-600" />
-                            {item.label}
-                        </Link>
-                    ))}
+                    {filteredNavItems.map(item => renderNavItem(item))}
                 </nav>
+
                 <div className="p-4 border-t border-gray-100">
                     <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-3 overflow-hidden">
