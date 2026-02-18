@@ -1,7 +1,7 @@
 
 import { mockPatients, mockNotes } from '../../../lib/mockData';
-import { PatientProfileCard } from '../../../components/PatientProfileCard';
-import { ClinicalNotes } from '../../../components/ClinicalNotes';
+import { PatientProfileCard } from '../../../components/dashboard/PatientProfileCard';
+import { ClinicalNotes } from '../../../components/dashboard/ClinicalNotes';
 
 export default function ExpedientePage() {
     const patient = mockPatients[0]; // Demo patient

@@ -32,7 +32,7 @@ export default function AboutPage() {
                     {/* Bio Column */}
                     <div className="lg:pr-8">
                         <div className="lg:max-w-lg">
-                            <h2 className="text-base font-semibold leading-7 text-blue-600">Dra. Diana Campos</h2>
+                            <h2 className="text-base font-semibold leading-7 text-blue-600">Dra. Diana Campos Del Carpio</h2>
                             <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Psicóloga Clínica & Especialista en Ansiedad</p>
                             <div className="mt-6 text-lg leading-8 text-gray-600 space-y-6">
                                 <p>

@@ -1,7 +1,7 @@
 
 import Image from 'next/image';
 import React from 'react';
-import { Patient } from '../lib/types';
+import { Patient } from '../../lib/types';
 import { Mail, Phone, Calendar, Briefcase, FileText } from 'lucide-react';
 
 interface PatientProfileProps {

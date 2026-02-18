@@ -3,8 +3,8 @@
 
 import Link from 'next/link';
 import { Home, Users, Calendar, FileText, Settings, PieChart, Activity, MessageSquare, ClipboardList, Shield } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import { NavItem, UserRole } from '../lib/types';
+import { useAuth } from '../../context/AuthContext';
+import { NavItem, UserRole } from '../../lib/types';
 import Image from 'next/image';
 
 const navItems: NavItem[] = [
@@ -43,8 +43,14 @@ export function Sidebar() {
     return (
         <aside className="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 hidden md:flex flex-col">
             <div className="flex items-center h-16 px-6 border-b border-gray-100">
-                <Activity className="w-8 h-8 text-blue-600 mr-2" />
-                <span className="text-xl font-bold text-gray-900 tracking-tight">Consultorio</span>
+                <div className="relative h-8 w-8 mr-2">
+                    <img
+                        src="/assets/logos/logo-creciendo-juntos.png"
+                        alt="Logo"
+                        className="object-contain"
+                    />
+                </div>
+                <span className="text-lg font-bold text-teal-700 tracking-tight">Creciendo Juntos</span>
             </div>
 
             <div className="px-4 py-2">

@@ -1,6 +1,6 @@
 
-import { Sidebar } from "../../components/Sidebar";
-import { Header } from "../../components/Header";
+import { Sidebar } from "../../components/dashboard/Sidebar";
+import { Header } from "../../components/dashboard/Header";
 
 export default function MainLayout({
   children,

@@ -6,9 +6,22 @@
   --foreground: #111827;
 }
 
-/* @theme {
-  --font-sans: 'Inter', system-ui, sans-serif;
-} */
+@theme {
+  --font-sans: 'Outfit', system-ui, sans-serif;
+
+  /* Rebranding 'blue' to a modern Teal/Emerald for "Creciendo Juntos" */
+  --color-blue-50: #f0fdfa;
+  --color-blue-100: #ccfbf1;
+  --color-blue-200: #99f6e4;
+  --color-blue-300: #5eead4;
+  --color-blue-400: #2dd4bf;
+  --color-blue-500: #14b8a6;
+  --color-blue-600: #0d9488;
+  --color-blue-700: #0f766e;
+  --color-blue-800: #115e59;
+  --color-blue-900: #134e4a;
+  --color-blue-950: #042f2e;
+}
 
 body {
   background: var(--background);

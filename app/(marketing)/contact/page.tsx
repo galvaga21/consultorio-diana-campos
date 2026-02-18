@@ -30,7 +30,7 @@ export default function ContactPage() {
                                         <span className="sr-only">Dirección</span>
                                         <MapPin className="h-6 w-6 text-blue-600" aria-hidden="true" />
                                     </dt>
-                                    <dd>Av. Principal 123, Consultorio 4B<br />Colonia Roma Norte, CDMX</dd>
+                                    <dd>Consultorio Virtual<br />Lima, Perú / Atención Online</dd>
                                 </div>
                                 <div className="flex gap-x-4">
                                     <dt className="flex-none">
@@ -38,7 +38,7 @@ export default function ContactPage() {
                                         <Phone className="h-6 w-6 text-blue-600" aria-hidden="true" />
                                     </dt>
                                     <dd>
-                                        <a className="hover:text-blue-600 transition-colors" href="tel:+525512345678">+52 (55) 1234-5678</a>
+                                        <a className="hover:text-blue-600 transition-colors" href="tel:+51987495419">+51 987 495 419</a>
                                         <p className="text-xs text-gray-400 mt-1">Lunes a Viernes, 9am - 6pm</p>
                                     </dd>
                                 </div>
@@ -48,7 +48,7 @@ export default function ContactPage() {
                                         <Mail className="h-6 w-6 text-blue-600" aria-hidden="true" />
                                     </dt>
                                     <dd>
-                                        <a className="hover:text-blue-600 transition-colors" href="mailto:hola@dianacampos.mx">hola@dianacampos.mx</a>
+                                        <a className="hover:text-blue-600 transition-colors" href="mailto:cdelcarpio05@gmail.com">cdelcarpio05@gmail.com</a>
                                     </dd>
                                 </div>
                             </dl>

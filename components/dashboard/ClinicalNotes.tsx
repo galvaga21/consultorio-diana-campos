@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ClinicalNote } from '../lib/types';
+import { ClinicalNote } from '../../lib/types';
 import { PencilLine, Clock } from 'lucide-react';
 
 interface ClinicalNotesProps {

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Payment } from '../lib/types';
+import { Payment } from '../../lib/types';
 import { CheckCircle, Clock } from 'lucide-react';
 
 interface FinanceTableProps {

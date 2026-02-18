@@ -1,9 +1,9 @@
 
-import { SignUpForm } from '../../../components/SignUpForm';
+import { SignUpForm } from '../../../components/auth/SignUpForm';
 
 export const metadata = {
     title: 'Crear Cuenta',
-    description: 'Regístrate para comenzar a usar el Consultorio Virtual.',
+    description: 'Regístrate para comenzar a usar Creciendo Juntos.',
 };
 
 export default function SignUpPage() {

@@ -1,6 +1,6 @@
 
 import { mockPayments } from '../../../lib/mockData';
-import { FinanceTable } from '../../../components/FinanceTable';
+import { FinanceTable } from '../../../components/dashboard/FinanceTable';
 
 export default function FinanzasPage() {
     const totalPagado = mockPayments.reduce((acc, curr) => curr.status === 'Pagado' ? acc + curr.amount : acc, 0);

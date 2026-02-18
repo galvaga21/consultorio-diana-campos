@@ -1,6 +1,6 @@
 
 import Link from 'next/link';
-import { Activity, Check, Heart, Users, Sparkles, Brain, Clock, Shield } from 'lucide-react';
+import { Activity, Check, Heart, Users, Sparkles, Brain, Clock, Shield, CheckCircle2 } from 'lucide-react';
 
 export const metadata = {
     title: 'Servicios | Consultorio Virtual Diana Campos',
@@ -26,7 +26,7 @@ export default function ServicesPage() {
             {/* Detailed Services Grid */}
             <div className="py-24 bg-white">
                 <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                    <div className="grid lg:grid-cols-3 gap-12">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
                         {/* Service 1 */}
                         <div className="flex flex-col bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 ring-1 ring-gray-900/5 transition-all hover:shadow-2xl hover:-translate-y-1">
                             <div className="p-8 sm:p-10 flex-auto">
@@ -207,13 +207,4 @@ export default function ServicesPage() {
             </div>
         </>
     );
-}
-
-function CheckCircle2({ className }: { className?: string }) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-            <circle cx="12" cy="12" r="10" />
-            <path d="m9 12 2 2 4-4" />
-        </svg>
-    )
 }

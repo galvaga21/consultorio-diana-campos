@@ -1,10 +1,10 @@
 
-import { LoginForm } from '../../../components/LoginForm';
+import { LoginForm } from '../../../components/auth/LoginForm';
 import { MagicLogin } from '../../../components/auth/MagicLogin';
 
 export const metadata = {
     title: 'Iniciar Sesión',
-    description: 'Inicia sesión en tu cuenta del Consultorio Virtual.',
+    description: 'Inicia sesión en tu cuenta de Creciendo Juntos.',
 };
 
 export default function LoginPage() {

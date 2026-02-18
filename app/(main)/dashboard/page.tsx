@@ -3,7 +3,7 @@
 
 import { useAuth } from '../../../context/AuthContext';
 import { mockAppointments } from '../../../lib/mockData';
-import { AppointmentCard } from '../../../components/AppointmentCard';
+import { AppointmentCard } from '../../../components/dashboard/AppointmentCard';
 
 const DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
