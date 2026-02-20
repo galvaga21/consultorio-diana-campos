@@ -3,10 +3,10 @@
 export type UserRole = 'admin' | 'psychologist' | 'patient';
 
 export interface Role {
-    id: UserRole;
+    id: string; // Changed from UserRole to support dynamic IDs
     nombre_rol: string;
     descripcion: string;
-    area_id?: string;
+    area_id?: string; // Links to Area.id
 }
 
 export interface Area {

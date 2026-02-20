@@ -118,8 +118,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                                     href={child.href}
                                     onClick={onClose}
                                     className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors ${pathname === child.href
-                                            ? 'bg-blue-50 text-blue-700'
-                                            : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
+                                        ? 'bg-blue-50 text-blue-700'
+                                        : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
                                         }`}
                                 >
                                     <child.icon className="w-4 h-4 mr-3 opacity-70" />
@@ -138,8 +138,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 href={item.href}
                 onClick={onClose}
                 className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors group ${isActive
-                        ? 'bg-blue-50 text-blue-700'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-blue-600'
+                    ? 'bg-blue-50 text-blue-700'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-blue-600'
                     }`}
             >
                 <item.icon className={`w-5 h-5 mr-3 ${isActive ? 'text-blue-600' : 'text-gray-400 group-hover:text-blue-600'}`} />
@@ -166,15 +166,29 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             `}>
                 <div className="flex items-center justify-between h-16 px-6 border-b border-gray-100">
                     <div className="flex items-center">
-                        <div className="relative h-8 w-8 mr-2">
-                            <Image
-                                src="/assets/logos/logo-creciendo-juntos.png"
-                                alt="Logo"
-                                fill
-                                className="object-contain"
-                            />
-                        </div>
-                        <span className="text-lg font-bold text-teal-700 tracking-tight">Creciendo Juntos</span>
+                        {(!user || user.role === 'patient') ? (
+                            <>
+                                <div className="relative h-8 w-8 mr-2">
+                                    <Image
+                                        src="/assets/logos/logo-creciendo-juntos.png"
+                                        alt="Logo"
+                                        fill
+                                        className="object-contain"
+                                    />
+                                </div>
+                                <span className="text-lg font-bold text-teal-700 tracking-tight">Creciendo Juntos</span>
+                            </>
+                        ) : (
+                            <>
+                                <div className="flex items-center justify-center h-8 w-8 mr-2 bg-indigo-600 rounded-lg text-white shadow-sm">
+                                    <Server className="w-5 h-5" />
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-lg font-bold text-gray-800 tracking-tight leading-none">SYSCREJU</span>
+                                    <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider leading-none">Sistema de Gestión</span>
+                                </div>
+                            </>
+                        )}
                     </div>
                     {/* Close button for mobile */}
                     <button onClick={onClose} className="md:hidden text-gray-500 hover:text-gray-700">
