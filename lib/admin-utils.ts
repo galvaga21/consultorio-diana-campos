@@ -1,8 +1,30 @@
-import { db } from "./firebase";
+import { db, firebaseConfig } from "./firebase";
 import { collection, getDocs, doc, setDoc, deleteDoc, updateDoc, addDoc } from "firebase/firestore";
+import { initializeApp, deleteApp } from "firebase/app";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserProfile } from "./firebase-utils";
 import { Role, Area } from "./types";
 
-// --- Roles Management ---
+// --- Users Management (Admin) ---
+
+export async function adminCreateAuthUser(data: any, password: string) {
+    // Create a temporary app to prevent the admin from being signed out
+    const tempApp = initializeApp(firebaseConfig, "TempApp_" + Date.now());
+    const tempAuth = getAuth(tempApp);
+
+    try {
+        const userCred = await createUserWithEmailAndPassword(tempAuth, data.email, password);
+        await tempAuth.signOut();
+        await deleteApp(tempApp);
+
+        // Create the profile in the main DB
+        await createUserProfile(userCred.user.uid, data);
+        return userCred.user.uid;
+    } catch (error) {
+        await deleteApp(tempApp);
+        throw error;
+    }
+}
 
 export async function getRoles(): Promise<Role[]> {
     const querySnapshot = await getDocs(collection(db, "roles"));

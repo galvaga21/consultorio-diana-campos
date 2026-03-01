@@ -1,6 +1,6 @@
 // Basic types for the application
 
-export type UserRole = 'admin' | 'psychologist' | 'patient';
+export type UserRole = string;
 
 export interface Role {
     id: string; // Changed from UserRole to support dynamic IDs

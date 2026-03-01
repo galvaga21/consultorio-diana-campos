@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../lib/firebase';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { auth, db } from '../../lib/firebase';
 import { createUserProfile } from '../../lib/firebase-utils';
 
 export function SignUpForm() {
@@ -34,6 +35,15 @@ export function SignUpForm() {
         try {
             const { firstName, lastName, email, password } = formData;
 
+            // 0. Encontrar el Rol "Paciente" dinámicamente de la Base de Datos
+            let rolIdToAssign = 'patient'; // Fallback en caso no exista aún
+            const rolesRef = collection(db, 'roles');
+            const q = query(rolesRef, where('nombre_rol', '==', 'Paciente'));
+            const querySnapshot = await getDocs(q);
+            if (!querySnapshot.empty) {
+                rolIdToAssign = querySnapshot.docs[0].id; // Asigna el Object ID real
+            }
+
             // 1. Create Auth User
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
@@ -43,23 +53,24 @@ export function SignUpForm() {
                 nombres: firstName,
                 apellidos: lastName,
                 email: email,
-                rol_id: 'patient', // Default role
+                rol_id: rolIdToAssign,
                 foto_perfil: ''
             });
 
             // 3. Redirect
             router.push('/dashboard');
 
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(err);
-            if (err.code === 'auth/email-already-in-use') {
+            const authError = err as { code?: string, message?: string };
+            if (authError.code === 'auth/email-already-in-use') {
                 setError('El correo electrónico ya está registrado.');
-            } else if (err.code === 'auth/weak-password') {
+            } else if (authError.code === 'auth/weak-password') {
                 setError('La contraseña debe tener al menos 6 caracteres.');
-            } else if (err.code === 'permission-denied') {
+            } else if (authError.code === 'permission-denied') {
                 setError('Error de permisos en la base de datos. Verifica las Reglas de Firestore en la consola de Firebase.');
             } else {
-                setError('Ocurrió un error al crear la cuenta. Inténtalo de nuevo. Detalle: ' + err.message);
+                setError('Ocurrió un error al crear la cuenta. Inténtalo de nuevo. Detalle: ' + (authError.message || ''));
             }
         } finally {
             setLoading(false);

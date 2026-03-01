@@ -37,7 +37,7 @@ export const Select: React.FC<SelectProps> = ({
                     {...props}
                 >
                     {placeholder && (
-                        <option value="" disabled selected hidden>
+                        <option value="" disabled hidden>
                             {placeholder}
                         </option>
                     )}

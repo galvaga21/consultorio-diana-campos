@@ -31,9 +31,10 @@ export function LoginForm() {
         try {
             await signInWithEmailAndPassword(auth, formData.email, formData.password);
             router.push('/dashboard');
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(err);
-            if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+            const authError = err as { code?: string, message?: string };
+            if (authError.code === 'auth/invalid-credential' || authError.code === 'auth/user-not-found' || authError.code === 'auth/wrong-password') {
                 setError('Correo o contraseña incorrectos.');
             } else {
                 setError('Ocurrió un error al iniciar sesión. Inténtalo de nuevo.');
